@@ -97,6 +97,8 @@ public class KlmAvhrrFile extends AvhrrFile implements AvhrrConstants {
         final boolean isFirstSouthBound = ((first & (1 << 15)) >> 15) == 1;
         final boolean isLastSouthBound = ((last & (1 << 15)) >> 15) == 1;
 
+        final int data_type = getHeader().getCompound("FILE_IDENTIFICATION").getInt("DATA_TYPE_CODE");
+
         if (isFirstSouthBound && isLastSouthBound) {
             northbound = false;
         } else {
@@ -105,7 +107,9 @@ public class KlmAvhrrFile extends AvhrrFile implements AvhrrConstants {
 
         final int firstChannel3ab = first & 3;
         final int lastChannel3ab = last & 3;
-        if (firstChannel3ab == 1 && lastChannel3ab == 1) {
+        if (data_type == 13) {
+            channel3ab = -1;
+        } else if (firstChannel3ab == 1 && lastChannel3ab == 1) {
             channel3ab = AvhrrConstants.CH_3A;
         } else if (firstChannel3ab == 0 && lastChannel3ab == 0) {
             channel3ab = AvhrrConstants.CH_3B;
